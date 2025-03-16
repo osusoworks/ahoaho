@@ -16,51 +16,8 @@
         .button-container { text-align: center; margin-top: 30px; }
         .match-button { background: #007AFF; color: #FFF; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; }
         .result-item { border: 1px solid #DDD; border-radius: 8px; padding: 15px; margin-bottom: 20px; background: #FFF; }
+        .watch-image { max-width: 100%; height: auto; margin-top:10px; border-radius:5px; }
     </style>
-    <script>
-let appData;
-
-// JSONデータを読み込む
-fetch('final_app_data.json')
-    .then(response => response.json())
-    .then(data => {
-        appData = data;
-        populateQuestions(); // 質問を表示する関数を実行
-    })
-    .catch(error => console.error('データ読み込みエラー:', error));
-
-// 質問を表示する関数
-function populateQuestions() {
-    const questionsContainer = document.getElementById('questions-container');
-    questionsContainer.innerHTML = ''; // 一旦クリア
-    
-    appData.questions.forEach(question => {
-        let optionsHTML = question.options.map(opt => `
-            <div class="option" data-option-id="${opt.id}">
-                <img src="${opt.image}" alt="${opt.text}">${opt.text}
-            </div>
-        `).join('');
-
-        questionsContainer.innerHTML += `
-            <div class="question-container" data-question-id="${question.id}">
-                <div class="question">${question.question}</div>
-                <div class="options">${optionsHTML}</div>
-            </div>`;
-    });
-
-    // 選択肢クリックイベントを再登録
-    document.querySelectorAll('.option').forEach(option => {
-        option.addEventListener('click', function() {
-            const questionContainer = this.closest('.question-container');
-            questionContainer.querySelectorAll('.option').forEach(opt => {
-                opt.classList.remove('selected');
-            });
-            this.classList.add('selected');
-        });
-    });
-}
-</script>
-
 </head>
 <body>
     <div class="container">
@@ -77,15 +34,21 @@ function populateQuestions() {
 
     <script src="matching-logic.js"></script>
     <script>
-        let watchesData = [];
-        fetch("final_app_data.json")
+        let appData;
+
+        fetch('final_app_data.json')
         .then(response => response.json())
         .then(data => {
-            watchesData = data.watches;
-            const questions = data.questions;
-            const container = document.getElementById('questions-container');
+            appData = data;
+            populateQuestions();
+        })
+        .catch(error => console.error('データ読み込みエラー:', error));
 
-            questions.forEach(q => {
+        function populateQuestions() {
+            const container = document.getElementById('questions-container');
+            container.innerHTML = '';
+
+            appData.questions.forEach(q => {
                 const questionDiv = document.createElement('div');
                 questionDiv.className = 'question-container';
                 questionDiv.dataset.questionId = q.id;
@@ -102,7 +65,7 @@ function populateQuestions() {
                     const optDiv = document.createElement('div');
                     optDiv.className = 'option';
                     optDiv.dataset.optionId = opt.id;
-                    optDiv.textContent = opt.text;
+                    optDiv.innerHTML = `<img src="${opt.image}" alt="${opt.text}" style="width:24px;height:24px;vertical-align:middle;margin-right:5px;">${opt.text}`;
 
                     optDiv.onclick = () => {
                         optionsDiv.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
@@ -115,7 +78,7 @@ function populateQuestions() {
                 questionDiv.appendChild(optionsDiv);
                 container.appendChild(questionDiv);
             });
-        });
+        }
 
         document.getElementById('match-button').onclick = () => {
             const answers = {};
@@ -124,14 +87,19 @@ function populateQuestions() {
                 answers[qc.dataset.questionId] = selectedOpt ? selectedOpt.dataset.optionId : 'no_preference';
             });
 
-            const results = matchWatches(answers, watchesData);
+            const results = matchWatches(answers, appData.watches);
             const resultsContainer = document.getElementById('matching-results');
             resultsContainer.innerHTML = '';
 
             results.forEach(watch => {
                 const resultDiv = document.createElement('div');
                 resultDiv.className = 'result-item';
-                resultDiv.innerHTML = `<h3>${watch.name}</h3><p>マッチング率: ${watch.matchRate}%</p><a href="${watch.link}" target="_blank">商品詳細を見る</a>`;
+                resultDiv.innerHTML = `
+                    <h3>${watch.brand} ${watch.id}</h3>
+                    <p>マッチング率: ${watch.matchRate}%</p>
+                    <img src="${watch.image_url}" alt="${watch.id}" class="watch-image">
+                    <p><a href="${watch.product_url}" target="_blank">商品詳細を見る</a></p>
+                `;
                 resultsContainer.appendChild(resultDiv);
             });
 
