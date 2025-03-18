@@ -65,7 +65,8 @@
                     const optDiv = document.createElement('div');
                     optDiv.className = 'option';
                     optDiv.dataset.optionId = opt.id;
-                    optDiv.innerHTML = `<img src="${opt.image}" alt="${opt.text}" style="width:24px;height:24px;vertical-align:middle;margin-right:5px;">${opt.text}`;
+                    optDiv.textContent = opt.text;
+
 
                     optDiv.onclick = () => {
                         optionsDiv.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
