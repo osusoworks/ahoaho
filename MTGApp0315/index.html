@@ -32,7 +32,6 @@
         <div id="matching-results" style="display: none;"></div>
     </div>
 
-    <script src="matching-logic.js"></script>
     <script>
         let appData;
 
@@ -54,7 +53,6 @@
                 questionDiv.dataset.questionId = q.id;
 
                 const questionTitle = document.createElement('div');
-                questionTitle = document.createElement('div');
                 questionTitle.className = 'question';
                 questionTitle.textContent = q.question;
                 questionDiv.appendChild(questionTitle);
@@ -88,6 +86,14 @@
                 answers[qc.dataset.questionId] = selectedOpt ? selectedOpt.dataset.optionId : 'no_preference';
             });
 
+            function matchWatches(answers, watches) {
+                // マッチングロジックを実装
+                return watches.filter(watch => {
+                    // 仮のマッチングロジック
+                    return true;
+                });
+            }
+
             const matchedWatches = matchWatches(answers, appData.watches);
             const resultsContainer = document.getElementById('matching-results');
             resultsContainer.innerHTML = '';
@@ -99,7 +105,7 @@
                     <h3>${watch["ブランド"] || ''} ${watch["品番"] || watch["商品名"] || ''}</h3>
                     <img src="${watch["画像URL"]}" alt="${watch["品番"]}" class="watch-image">
                     <p>マッチング率: ${watch.matchRate || 'N/A'}%</p>
-                    <p><a href="${watch["商品ページ"]}" target="_blank">商品詳細を見る</a></p>
+                    <p><a href="${watch["商品ページ"]}" target="_blank" rel="noopener noreferrer">商品詳細を見る</a></p>
                 `;
                 resultsContainer.appendChild(resultDiv);
             });
