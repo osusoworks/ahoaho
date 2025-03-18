@@ -81,32 +81,29 @@
             });
         }
 
-        document.getElementById('match-button').onclick = () => {
-            const answers = {};
-            document.querySelectorAll('.question-container').forEach(qc => {
-                const selectedOpt = qc.querySelector('.option.selected');
-                answers[qc.dataset.questionId] = selectedOpt ? selectedOpt.dataset.optionId : 'no_preference';
-            });
+       document.getElementById('match-button').onclick = () => {
+    const answers = {};
+    document.querySelectorAll('.question-container').forEach(qc => {
+        const selectedOpt = qc.querySelector('.option.selected');
+        answers[qc.dataset.questionId] = selectedOpt ? selectedOpt.dataset.optionId : 'no_preference';
+    });
 
-            const results = matchWatches(answers, appData.watches);
-            const resultsContainer = document.getElementById('matching-results');
-            resultsContainer.innerHTML = '';
+    const matchedWatches = matchWatches(answers, appData.watches);
+    const resultsContainer = document.getElementById('matching-results');
+    resultsContainer.innerHTML = '';
 
-            results.forEach(watch => {
-                const resultDiv = document.createElement('div');
-                resultDiv.className = 'result-item';
-                resultDiv.innerHTML = `
-                    <h3>${watch.brand} ${watch.id}</h3>
-                    <p>マッチング率: ${watch.matchRate}%</p>
-                    <img src="${watch.image_url}" alt="${watch.id}" class="watch-image">
-                    <p><a href="${watch.product_url}" target="_blank">商品詳細を見る</a></p>
-                `;
-                resultsContainer.appendChild(resultDiv);
-            });
+    matchedWatches.forEach(watch => {
+        const resultDiv = document.createElement('div');
+        resultDiv.className = 'result-item';
+        resultDiv.innerHTML = `
+            <h3>${watch["ブランド"] || ''} ${watch["品番"] || watch.id}</h3>
+            <p>マッチング率: ${watch.matchRate || 'N/A'}%</p>
+            <img src="${watch.image_url}" alt="${watch["商品名"] || watch.id}" class="watch-image">
+            <p><a href="${watch.product_url || watch["商品ページ"]}" target="_blank">商品詳細を見る</a></p>
+        `;
+        resultsContainer.appendChild(resultDiv);
+    });
 
-            document.getElementById('questions-container').style.display = 'none';
-            resultsContainer.style.display = 'block';
-        };
-    </script>
-</body>
-</html>
+    document.getElementById('questions-container').style.display = 'none';
+    resultsContainer.style.display = 'block';
+};
