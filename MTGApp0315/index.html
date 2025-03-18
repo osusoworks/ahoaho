@@ -5,47 +5,206 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>時計マッチングアプリ</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 20px; background-color: #F2F2F7; color: #000; }
-        .container { max-width: 800px; margin: 0 auto; background: #FFF; border-radius: 10px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,.1); }
-        h1 { text-align: center; color: #007AFF; }
-        .question-container { margin-bottom: 30px; }
-        .question { font-weight: bold; margin-bottom: 10px; font-size: 18px; }
-        .options { display: flex; flex-wrap: wrap; gap: 10px; }
-        .option { background: #EFEFEF; border-radius: 8px; padding: 10px; cursor: pointer; }
-        .option.selected { background: #007AFF; color: #FFF; }
-        .button-container { text-align: center; margin-top: 30px; }
-        .match-button { background: #007AFF; color: #FFF; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; }
-        .result-item { border: 1px solid #DDD; border-radius: 8px; padding: 15px; margin-bottom: 20px; background: #FFF; }
-        .watch-image { max-width: 100%; height: auto; margin-top:10px; border-radius:5px; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            background-color: #F2F2F7; 
+            color: #000; 
+        }
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: #FFF; 
+            border-radius: 10px; 
+            padding: 20px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,.1); 
+        }
+        h1 { 
+            text-align: center; 
+            color: #007AFF; 
+        }
+        .question-container { 
+            margin-bottom: 30px; 
+        }
+        .question { 
+            font-weight: bold; 
+            margin-bottom: 10px; 
+            font-size: 18px; 
+        }
+        .options { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 10px; 
+        }
+        .option { 
+            background: #EFEFEF; 
+            border-radius: 8px; 
+            padding: 10px; 
+            cursor: pointer; 
+            transition: background-color 0.2s;
+        }
+        .option:hover {
+            background: #E0E0E0;
+        }
+        .option.selected { 
+            background: #007AFF; 
+            color: #FFF; 
+        }
+        .button-container { 
+            text-align: center; 
+            margin-top: 30px; 
+        }
+        .button { 
+            background: #007AFF; 
+            color: #FFF; 
+            border: none; 
+            padding: 12px 24px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            transition: background-color 0.2s;
+            margin: 0 10px;
+        }
+        .button:hover {
+            background: #0056b3;
+        }
+        .button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+        .result-item { 
+            border: 1px solid #DDD; 
+            border-radius: 8px; 
+            padding: 15px; 
+            margin-bottom: 20px; 
+            background: #FFF; 
+        }
+        .watch-image { 
+            max-width: 100%; 
+            height: auto; 
+            margin-top: 10px; 
+            border-radius: 5px; 
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+        .loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0, 123, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #007bff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .matched-attributes {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        .error-message {
+            color: #dc3545;
+            text-align: center;
+            padding: 10px;
+            margin: 20px 0;
+            background-color: #f8d7da;
+            border-radius: 5px;
+            display: none;
+        }
+        /* iPadに最適化したスタイル */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .container {
+                max-width: 90%;
+                padding: 30px;
+            }
+            .option {
+                padding: 15px;
+                font-size: 16px;
+            }
+            .button {
+                padding: 15px 30px;
+                font-size: 16px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>時計マッチングアプリ</h1>
 
+        <div id="error-message" class="error-message"></div>
+
         <div id="questions-container"></div>
 
         <div class="button-container">
-            <button id="match-button" class="match-button">マッチング開始</button>
+            <button id="match-button" class="button">マッチング開始</button>
         </div>
 
-        <div id="matching-results" style="display: none;"></div>
+        <div id="loading" class="loading">
+            <div class="loading-spinner"></div>
+            <p>マッチング中...</p>
+        </div>
+
+        <div id="matching-results" style="display: none;">
+            <div id="results-content"></div>
+            <div class="button-container">
+                <button id="back-button" class="button">質問に戻る</button>
+            </div>
+        </div>
     </div>
 
+    <script src="matching-logic.js"></script>
     <script>
+        // アプリケーションのメインデータ
         let appData;
-
-        fetch('final_app_data.json')
-        .then(response => response.json())
-        .then(data => {
-            appData = data;
-            populateQuestions();
-        })
-        .catch(error => console.error('データ読み込みエラー:', error));
-
+        
+        // ページロード時の初期化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            
+            // イベントリスナーの設定
+            document.getElementById('match-button').addEventListener('click', startMatching);
+            document.getElementById('back-button').addEventListener('click', backToQuestions);
+        });
+        
+        // データの読み込み
+        function loadData() {
+            const errorMessageEl = document.getElementById('error-message');
+            
+            fetch('final_app_data.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('データファイルの読み込みに失敗しました');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    appData = data;
+                    populateQuestions();
+                    errorMessageEl.style.display = 'none';
+                })
+                .catch(error => {
+                    console.error('データ読み込みエラー:', error);
+                    errorMessageEl.textContent = 'データの読み込みに失敗しました。ページを再読み込みしてください。';
+                    errorMessageEl.style.display = 'block';
+                });
+        }
+        
+        // 質問を表示する
         function populateQuestions() {
             const container = document.getElementById('questions-container');
             container.innerHTML = '';
+            
+            if (!appData || !appData.questions) {
+                console.error('質問データがありません');
+                return;
+            }
 
             appData.questions.forEach(q => {
                 const questionDiv = document.createElement('div');
@@ -64,12 +223,22 @@
                     const optDiv = document.createElement('div');
                     optDiv.className = 'option';
                     optDiv.dataset.optionId = opt.id;
-                    optDiv.textContent = opt.text;
+                    
+                    // 画像がある場合は表示、ない場合はテキストのみ
+                    if (opt.image) {
+                        try {
+                            optDiv.innerHTML = `<img src="${opt.image}" alt="${opt.text}" style="width:24px;height:24px;vertical-align:middle;margin-right:5px;" onerror="this.style.display='none'">${opt.text}`;
+                        } catch (e) {
+                            optDiv.textContent = opt.text;
+                        }
+                    } else {
+                        optDiv.textContent = opt.text;
+                    }
 
-                    optDiv.onclick = () => {
+                    optDiv.addEventListener('click', function() {
                         optionsDiv.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
-                        optDiv.classList.add('selected');
-                    };
+                        this.classList.add('selected');
+                    });
 
                     optionsDiv.appendChild(optDiv);
                 });
@@ -78,41 +247,59 @@
                 container.appendChild(questionDiv);
             });
         }
-
-        document.getElementById('match-button').onclick = () => {
+        
+        // マッチング開始処理
+        function startMatching() {
             const answers = {};
+            let allAnswered = true;
+            
             document.querySelectorAll('.question-container').forEach(qc => {
                 const selectedOpt = qc.querySelector('.option.selected');
                 answers[qc.dataset.questionId] = selectedOpt ? selectedOpt.dataset.optionId : 'no_preference';
+                
+                // すべての質問に回答しているか確認
+                if (!selectedOpt) {
+                    allAnswered = false;
+                }
             });
-
-            function matchWatches(answers, watches) {
-                // マッチングロジックを実装
-                return watches.filter(watch => {
-                    // 仮のマッチングロジック
-                    return true;
-                });
+            
+            // すべての質問に回答していない場合は確認
+            if (!allAnswered) {
+                if (!confirm('すべての質問に回答していません。このまま続けますか？')) {
+                    return;
+                }
             }
-
-            const matchedWatches = matchWatches(answers, appData.watches);
-            const resultsContainer = document.getElementById('matching-results');
-            resultsContainer.innerHTML = '';
-
-            matchedWatches.forEach(watch => {
-                const resultDiv = document.createElement('div');
-                resultDiv.className = 'result-item';
-                resultDiv.innerHTML = `
-                    <h3>${watch["ブランド"] || ''} ${watch["品番"] || watch["商品名"] || ''}</h3>
-                    <img src="${watch["画像URL"]}" alt="${watch["品番"]}" class="watch-image">
-                    <p>マッチング率: ${watch.matchRate || 'N/A'}%</p>
-                    <p><a href="${watch["商品ページ"]}" target="_blank" rel="noopener noreferrer">商品詳細を見る</a></p>
-                `;
-                resultsContainer.appendChild(resultDiv);
-            });
-
+            
+            // マッチングの開始
             document.getElementById('questions-container').style.display = 'none';
-            resultsContainer.style.display = 'block';
-        };
+            document.getElementById('match-button').style.display = 'none';
+            document.getElementById('loading').style.display = 'block';
+            
+            // 非同期処理にして、UIがブロックされないようにする
+            setTimeout(() => {
+                try {
+                    const results = matchWatches(answers, appData.watches);
+                    displayMatchingResults(results, answers);
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('matching-results').style.display = 'block';
+                } catch (error) {
+                    console.error('マッチング処理エラー:', error);
+                    const errorMessageEl = document.getElementById('error-message');
+                    errorMessageEl.textContent = 'マッチング処理中にエラーが発生しました。';
+                    errorMessageEl.style.display = 'block';
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('questions-container').style.display = 'block';
+                    document.getElementById('match-button').style.display = 'inline-block';
+                }
+            }, 500);
+        }
+        
+        // 質問に戻る処理
+        function backToQuestions() {
+            document.getElementById('matching-results').style.display = 'none';
+            document.getElementById('questions-container').style.display = 'block';
+            document.getElementById('match-button').style.display = 'inline-block';
+        }
     </script>
 </body>
 </html>
