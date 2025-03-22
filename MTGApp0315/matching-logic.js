@@ -1,3 +1,4 @@
+// エラー対策済み マッチングロジック完全版
 function matchWatches(answers, watches) {
     if (!appData || !appData.questions) return [];
 
@@ -10,10 +11,8 @@ function matchWatches(answers, watches) {
 
             if (!question || !selectedOption) return false;
 
-            // ブランド名のマッチングを修正
             if (question.question === "ブランド") {
-                return watch["brand"] === selectedOption.text || 
-                       watch.attributes?.["ブランド"]?.includes(selectedOption.text);
+                return watch["ブランド"] && watch["ブランド"] === selectedOption.text;
             }
 
             const watchAttributeValue = watch.attributes?.[question.question];
@@ -28,17 +27,14 @@ function matchWatches(answers, watches) {
 
             if (!question || !selectedOption) return count;
 
-            // ブランド名のマッチングを修正
             if (question.question === "ブランド") {
-                return watch["brand"] === selectedOption.text ||
-                       watch.attributes?.["ブランド"]?.includes(selectedOption.text) ? count + 1 : count;
+                return watch["ブランド"] && watch["ブランド"] === selectedOption.text ? count + 1 : count;
             }
 
             const watchAttributeValue = watch.attributes?.[question.question];
             return watchAttributeValue && watchAttributeValue.includes(selectedOption.text) ? count + 1 : count;
         }, 0);
 
-        // 「特にこだわらない」の回答を考慮してマッチング率を計算
         const totalAnswered = Object.values(answers).filter(a => a !== "no_preference").length;
         watch.matchRate = totalAnswered > 0 ? Math.round((matchCount / totalAnswered) * 100) : 0;
 
