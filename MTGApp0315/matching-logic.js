@@ -1,5 +1,8 @@
-// 改善版マッチングロジック（エラーハンドリング強化版）
+// 改善版マッチングロジック（エラーハンドリング強化版 v2）
 function matchWatches(answers, watches) {
+    console.log("マッチング開始: 回答データ", answers);
+    console.log("マッチング開始: 時計データ数", watches ? watches.length : 0);
+    
     // データ検証
     if (!appData || !appData.questions || !Array.isArray(appData.questions) || appData.questions.length === 0) {
         console.error('質問データが正しく読み込まれていません');
@@ -8,6 +11,11 @@ function matchWatches(answers, watches) {
     
     if (!watches || !Array.isArray(watches) || watches.length === 0) {
         console.error('時計データが正しく読み込まれていません');
+        return [];
+    }
+    
+    if (!answers || Object.keys(answers).length === 0) {
+        console.error('回答データがありません');
         return [];
     }
 
@@ -36,13 +44,22 @@ function matchWatches(answers, watches) {
 
             // 各質問に対するマッチング評価
             Object.entries(answers).forEach(([questionId, optionId]) => {
-                // 「指定なし」の場合はスキップ
-                if (optionId === "no_preference") return;
+                // 「指定なし」または未回答の場合はスキップ
+                if (!optionId || optionId === "no_preference") return;
 
+                // 質問データの取得
                 const question = appData.questions.find(q => q.id === questionId);
-                const selectedOption = question?.options?.find(o => o.id === optionId);
-
-                if (!question || !selectedOption) return;
+                if (!question) {
+                    console.log(`質問ID ${questionId} が見つかりません`);
+                    return;
+                }
+                
+                // 選択肢データの取得
+                const selectedOption = question.options.find(o => o.id === optionId);
+                if (!selectedOption) {
+                    console.log(`質問 ${questionId} の選択肢ID ${optionId} が見つかりません`);
+                    return;
+                }
 
                 // この質問の重み付け（デフォルトは1）
                 const weight = questionWeights[questionId] || 1;
@@ -53,39 +70,68 @@ function matchWatches(answers, watches) {
                 let matchScore = 0;
 
                 // ブランドの場合は完全一致で評価
-                if (question.question === "ブランド") {
-                    isMatch = watch.brand && watch.brand === selectedOption.text;
+                if (question.question === "ブランド" && selectedOption.text) {
+                    // ブランド名の正規化（大文字小文字を無視）
+                    const normalizedBrand = (watch.brand || "").toLowerCase();
+                    const normalizedOption = selectedOption.text.toLowerCase();
+                    
+                    isMatch = normalizedBrand === normalizedOption;
                     matchScore = isMatch ? weight : 0;
                 } 
                 // 属性の場合は配列内の完全一致で評価
-                else {
+                else if (selectedOption.text) {
                     const attributes = watch.attributes || {};
-                    const attributeValues = attributes[question.question] || [];
+                    // 質問のテキストを属性名として使用
+                    const attributeKey = question.question;
+                    const attributeValues = attributes[attributeKey] || [];
+                    
+                    // 属性値が配列でない場合は配列に変換
+                    const attributeArray = Array.isArray(attributeValues) ? attributeValues : [attributeValues];
+                    
+                    // 選択肢のテキストを正規化
+                    const normalizedOption = selectedOption.text.toLowerCase();
                     
                     // 完全一致を優先
-                    if (attributeValues.includes(selectedOption.text)) {
+                    let hasExactMatch = false;
+                    let hasPartialMatch = false;
+                    
+                    for (const value of attributeArray) {
+                        if (!value) continue;
+                        
+                        // 属性値を正規化
+                        const normalizedValue = value.toLowerCase();
+                        
+                        // 完全一致チェック
+                        if (normalizedValue === normalizedOption) {
+                            hasExactMatch = true;
+                            break;
+                        }
+                        
+                        // 部分一致チェック
+                        if (normalizedValue.includes(normalizedOption) || normalizedOption.includes(normalizedValue)) {
+                            hasPartialMatch = true;
+                        }
+                    }
+                    
+                    if (hasExactMatch) {
                         isMatch = true;
                         matchScore = weight;
-                    } 
-                    // 部分一致も評価するが、スコアは低め
-                    else {
-                        for (const value of attributeValues) {
-                            if (value && selectedOption.text && 
-                                (value.includes(selectedOption.text) || selectedOption.text.includes(value))) {
-                                isMatch = true;
-                                matchScore = weight * 0.5; // 部分一致は完全一致の半分のスコア
-                                break;
-                            }
-                        }
+                    } else if (hasPartialMatch) {
+                        isMatch = true;
+                        matchScore = weight * 0.5; // 部分一致は完全一致の半分のスコア
                     }
                 }
 
                 // マッチング詳細を記録
                 matchDetails[question.question] = {
-                    userChoice: selectedOption.text,
+                    userChoice: selectedOption.text || "",
                     watchValue: question.question === "ブランド" ? 
-                        watch.brand : 
-                        (watch.attributes?.[question.question] || []).join(", "),
+                        (watch.brand || "") : 
+                        ((watch.attributes && watch.attributes[question.question]) ? 
+                            (Array.isArray(watch.attributes[question.question]) ? 
+                                watch.attributes[question.question].join(", ") : 
+                                watch.attributes[question.question]) : 
+                            ""),
                     isMatch: isMatch,
                     score: matchScore,
                     weight: weight
@@ -107,6 +153,8 @@ function matchWatches(answers, watches) {
             };
         }).filter(watch => watch !== null); // 無効なデータを除外
 
+        console.log("マッチング完了: 結果数", matchedWatches.length);
+
         // マッチ率でソート
         return matchedWatches
             .filter(watch => watch.matchRate > 0) // マッチ率0%の時計は除外
@@ -120,26 +168,31 @@ function matchWatches(answers, watches) {
             });
     } catch (error) {
         console.error('マッチング処理中にエラーが発生しました:', error);
+        // エラーの詳細をコンソールに出力
+        console.error('エラーの詳細:', error.message);
+        console.error('エラーのスタックトレース:', error.stack);
         return [];
     }
 }
 
 // マッチング結果を表示する関数
 function displayMatchingResults(results, userAnswers) {
-    const resultsContainer = document.getElementById('results-content');
-    if (!resultsContainer) {
-        console.error('結果表示コンテナが見つかりません');
-        return;
-    }
-    
-    resultsContainer.innerHTML = '';
-
-    if (!results || results.length === 0) {
-        resultsContainer.innerHTML = '<div class="no-results">条件に一致する時計が見つかりませんでした。条件を変更して再度お試しください。</div>';
-        return;
-    }
-
     try {
+        console.log("結果表示開始: 結果数", results ? results.length : 0);
+        
+        const resultsContainer = document.getElementById('results-content');
+        if (!resultsContainer) {
+            console.error('結果表示コンテナが見つかりません');
+            return;
+        }
+        
+        resultsContainer.innerHTML = '';
+
+        if (!results || results.length === 0) {
+            resultsContainer.innerHTML = '<div class="no-results">条件に一致する時計が見つかりませんでした。条件を変更して再度お試しください。</div>';
+            return;
+        }
+
         // 上位5つの結果のみ表示
         const topResults = results.slice(0, 5);
         
@@ -153,7 +206,7 @@ function displayMatchingResults(results, userAnswers) {
             let fullName = brandName + (watchName ? ' ' + watchName : '');
             
             if (!fullName.trim()) {
-                fullName = 'ID: ' + watch.id; // 名前がない場合はIDを表示
+                fullName = 'ID: ' + (watch.id || 'unknown'); // 名前がない場合はIDを表示
             }
             
             // マッチ率に応じたスタイル
@@ -179,11 +232,11 @@ function displayMatchingResults(results, userAnswers) {
                     <h4>時計の詳細</h4>
                     <table>
                         ${watch.price ? `<tr><td>価格:</td><td>${watch.price}</td></tr>` : ''}
-                        ${watch.details?.caliber ? `<tr><td>キャリバー:</td><td>${watch.details.caliber}</td></tr>` : ''}
-                        ${watch.details?.drive_system ? `<tr><td>駆動方式:</td><td>${watch.details.drive_system}</td></tr>` : ''}
-                        ${watch.details?.water_resistance ? `<tr><td>防水性:</td><td>${watch.details.water_resistance}</td></tr>` : ''}
-                        ${watch.details?.case_material ? `<tr><td>ケース素材:</td><td>${watch.details.case_material}</td></tr>` : ''}
-                        ${watch.details?.band_material ? `<tr><td>バンド素材:</td><td>${watch.details.band_material}</td></tr>` : ''}
+                        ${watch.details && watch.details.caliber ? `<tr><td>キャリバー:</td><td>${watch.details.caliber}</td></tr>` : ''}
+                        ${watch.details && watch.details.drive_system ? `<tr><td>駆動方式:</td><td>${watch.details.drive_system}</td></tr>` : ''}
+                        ${watch.details && watch.details.water_resistance ? `<tr><td>防水性:</td><td>${watch.details.water_resistance}</td></tr>` : ''}
+                        ${watch.details && watch.details.case_material ? `<tr><td>ケース素材:</td><td>${watch.details.case_material}</td></tr>` : ''}
+                        ${watch.details && watch.details.band_material ? `<tr><td>バンド素材:</td><td>${watch.details.band_material}</td></tr>` : ''}
                     </table>
                 </div>
                 
@@ -191,7 +244,7 @@ function displayMatchingResults(results, userAnswers) {
                     <h4>マッチした属性</h4>
                     <ul>
                         ${Object.entries(watch.matchDetails || {})
-                            .filter(([_, detail]) => detail.isMatch)
+                            .filter(([_, detail]) => detail && detail.isMatch)
                             .map(([question, detail]) => `
                                 <li>
                                     <strong>${question}:</strong> 
@@ -214,8 +267,15 @@ function displayMatchingResults(results, userAnswers) {
         `;
         
         resultsContainer.insertBefore(resultsSummary, resultsContainer.firstChild);
+        console.log("結果表示完了");
     } catch (error) {
         console.error('結果表示中にエラーが発生しました:', error);
-        resultsContainer.innerHTML = '<div class="error-message">結果の表示中にエラーが発生しました。もう一度お試しください。</div>';
+        console.error('エラーの詳細:', error.message);
+        console.error('エラーのスタックトレース:', error.stack);
+        
+        const resultsContainer = document.getElementById('results-content');
+        if (resultsContainer) {
+            resultsContainer.innerHTML = '<div class="error-message">結果の表示中にエラーが発生しました。もう一度お試しください。</div>';
+        }
     }
 }
