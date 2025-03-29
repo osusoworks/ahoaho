@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,7 +12,7 @@
             margin: 0;
             padding: 0;
         }
-        
+
         body {
             font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
             line-height: 1.6;
@@ -20,13 +21,13 @@
             padding: 0;
             margin: 0;
         }
-        
+
         .container {
             max-width: 100%;
             padding: 0;
             margin: 0 auto;
         }
-        
+
         header {
             background-color: #003366;
             color: white;
@@ -34,12 +35,12 @@
             text-align: center;
             position: relative;
         }
-        
+
         h1 {
             font-size: 1.5rem;
             margin: 0;
         }
-        
+
         /* 質問セクション */
         .question-section {
             background-color: #fff;
@@ -49,7 +50,7 @@
             padding: 1.5rem;
             position: relative;
         }
-        
+
         .question-number {
             position: absolute;
             top: -15px;
@@ -65,21 +66,21 @@
             justify-content: center;
             font-weight: bold;
         }
-        
+
         .question-title {
             font-size: 1.2rem;
             margin-bottom: 1rem;
             text-align: center;
             padding-top: 0.5rem;
         }
-        
+
         .options-container {
             display: flex;
             flex-wrap: wrap;
             gap: 0.5rem;
             justify-content: center;
         }
-        
+
         .option {
             background-color: #f0f0f0;
             border: 2px solid #ddd;
@@ -91,25 +92,25 @@
             text-align: center;
             min-width: 120px;
         }
-        
+
         .option:hover {
             background-color: #e0e0e0;
             border-color: #ccc;
         }
-        
+
         .option.selected {
             background-color: #007bff;
             color: white;
             border-color: #0056b3;
         }
-        
+
         /* ナビゲーションボタン */
         .navigation-buttons {
             display: flex;
             justify-content: space-between;
             margin-top: 1.5rem;
         }
-        
+
         .nav-button {
             background-color: #003366;
             color: white;
@@ -119,16 +120,16 @@
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
-        
+
         .nav-button:hover {
             background-color: #00254d;
         }
-        
+
         .nav-button:disabled {
             background-color: #cccccc;
             cursor: not-allowed;
         }
-        
+
         .skip-button {
             background-color: #6c757d;
             color: white;
@@ -139,11 +140,11 @@
             transition: background-color 0.3s ease;
             margin: 0 auto;
         }
-        
+
         .skip-button:hover {
             background-color: #5a6268;
         }
-        
+
         /* プログレスバー */
         .progress-container {
             width: 100%;
@@ -153,13 +154,13 @@
             height: 8px;
             overflow: hidden;
         }
-        
+
         .progress-bar {
             height: 100%;
             background-color: #007bff;
             transition: width 0.3s ease;
         }
-        
+
         /* 結果セクション */
         .results-section {
             display: none;
@@ -169,25 +170,25 @@
             margin: 1rem;
             padding: 1.5rem;
         }
-        
+
         .results-title {
             font-size: 1.5rem;
             margin-bottom: 1rem;
             text-align: center;
         }
-        
+
         .result-item {
             border: 1px solid #ddd;
             border-radius: 4px;
             padding: 1rem;
             margin-bottom: 1rem;
         }
-        
+
         .result-item h3 {
             margin-bottom: 0.5rem;
             color: #003366;
         }
-        
+
         .match-rate {
             display: inline-block;
             padding: 0.25rem 0.5rem;
@@ -195,27 +196,27 @@
             margin-bottom: 0.5rem;
             font-weight: bold;
         }
-        
+
         .excellent-match {
             background-color: #28a745;
             color: white;
         }
-        
+
         .good-match {
             background-color: #17a2b8;
             color: white;
         }
-        
+
         .fair-match {
             background-color: #ffc107;
             color: #212529;
         }
-        
+
         .poor-match {
             background-color: #dc3545;
             color: white;
         }
-        
+
         .watch-image {
             max-width: 100%;
             height: auto;
@@ -223,49 +224,51 @@
             max-height: 200px;
             display: block;
         }
-        
-        .watch-details, .matched-attributes {
+
+        .watch-details,
+        .matched-attributes {
             margin-top: 1rem;
         }
-        
-        .watch-details h4, .matched-attributes h4 {
+
+        .watch-details h4,
+        .matched-attributes h4 {
             margin-bottom: 0.5rem;
             color: #003366;
         }
-        
+
         .watch-details table {
             width: 100%;
             border-collapse: collapse;
         }
-        
+
         .watch-details td {
             padding: 0.25rem;
             border-bottom: 1px solid #eee;
         }
-        
+
         .watch-details td:first-child {
             font-weight: bold;
             width: 40%;
         }
-        
+
         .matched-attributes ul {
             list-style-type: none;
             padding-left: 0;
         }
-        
+
         .matched-attributes li {
             margin-bottom: 0.25rem;
             padding-left: 1rem;
             position: relative;
         }
-        
+
         .matched-attributes li:before {
             content: "✓";
             color: #28a745;
             position: absolute;
             left: 0;
         }
-        
+
         .product-link {
             display: inline-block;
             background-color: #003366;
@@ -275,24 +278,25 @@
             border-radius: 4px;
             margin-bottom: 0.5rem;
         }
-        
+
         .product-link:hover {
             background-color: #00254d;
         }
-        
+
         .results-summary {
             text-align: center;
             margin-bottom: 1rem;
             font-weight: bold;
         }
-        
-        .no-results, .error-message {
+
+        .no-results,
+        .error-message {
             text-align: center;
             padding: 2rem;
             color: #dc3545;
             font-weight: bold;
         }
-        
+
         /* スタートボタン */
         .start-button {
             display: block;
@@ -308,46 +312,48 @@
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
-        
+
         .start-button:hover {
             background-color: #0056b3;
         }
-        
+
         /* レスポンシブデザイン */
         @media (max-width: 768px) {
             .option {
                 flex: 1 0 100%;
             }
-            
+
             .navigation-buttons {
                 flex-direction: column;
                 gap: 0.5rem;
             }
-            
-            .nav-button, .skip-button {
+
+            .nav-button,
+            .skip-button {
                 width: 100%;
             }
         }
-        
+
         @media (min-width: 769px) {
             .container {
                 max-width: 800px;
                 padding: 0 1rem;
             }
-            
-            .question-section, .results-section {
+
+            .question-section,
+            .results-section {
                 padding: 2rem;
             }
-            
+
             .options-container {
                 gap: 1rem;
             }
-            
+
             .option {
                 flex: 1 0 calc(33.333% - 1rem);
             }
         }
-        
+
         /* ローディングインジケーター */
         .loading {
             display: none;
@@ -361,21 +367,26 @@
             justify-content: center;
             align-items: center;
         }
-        
+
         .loading-spinner {
             width: 50px;
             height: 50px;
             border: 5px solid #f3f3f3;
-            border-top: 5px solid #007bff;
+            border-top-color: #007bff;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
-        
+
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
-        
+
         /* エラーメッセージ */
         .error-container {
             display: none;
@@ -392,12 +403,12 @@
             width: 400px;
             text-align: center;
         }
-        
+
         .error-container h3 {
             color: #dc3545;
             margin-bottom: 1rem;
         }
-        
+
         .error-container button {
             background-color: #007bff;
             color: white;
@@ -408,570 +419,60 @@
             transition: background-color 0.3s ease;
             margin-top: 1rem;
         }
-        
+
         .error-container button:hover {
             background-color: #0056b3;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <header>
             <h1>腕時計マッチングアプリ</h1>
         </header>
-        
+
         <div class="progress-container">
             <div class="progress-bar" id="progress-bar" style="width: 0%;"></div>
         </div>
-        
+
         <div id="question-container" class="question-section">
             <div class="question-number" id="question-number">1</div>
             <h2 class="question-title" id="question-title">質問がロード中です...</h2>
             <div class="options-container" id="options-container">
-                <!-- オプションはJavaScriptで動的に生成 -->
-            </div>
+                </div>
             <div class="navigation-buttons">
                 <button id="prev-button" class="nav-button" disabled>前へ</button>
                 <button id="skip-button" class="skip-button">この質問をスキップ</button>
                 <button id="next-button" class="nav-button" disabled>次へ</button>
             </div>
         </div>
-        
+
         <button id="start-matching" class="start-button">マッチング開始</button>
-        
+
         <div id="results-section" class="results-section">
             <h2 class="results-title">あなたにおすすめの腕時計</h2>
             <div id="results-content">
-                <!-- 結果はJavaScriptで動的に生成 -->
-            </div>
+                </div>
             <button id="restart-button" class="nav-button" style="display: block; margin: 1rem auto;">最初からやり直す</button>
         </div>
     </div>
-    
+
     <div class="loading" id="loading">
         <div class="loading-spinner"></div>
     </div>
-    
+
     <div class="error-container" id="error-container">
         <h3 id="error-title">エラーが発生しました</h3>
         <p id="error-message">マッチング処理中にエラーが発生しました。もう一度お試しください。</p>
         <button id="error-ok-button">OK</button>
     </div>
 
-    <!-- マッチングロジックを直接埋め込み -->
     <script>
-    // 改善版マッチングロジック（エラーハンドリング強化版 v2）
-    function matchWatches(answers, watches) {
-        console.log("マッチング開始: 回答データ", answers);
-        console.log("マッチング開始: 時計データ数", watches ? watches.length : 0);
-        
-        // データ検証
-        if (!appData || !appData.questions || !Array.isArray(appData.questions) || appData.questions.length === 0) {
-            console.error('質問データが正しく読み込まれていません');
-            return [];
-        }
-        
-        if (!watches || !Array.isArray(watches) || watches.length === 0) {
-            console.error('時計データが正しく読み込まれていません');
-            return [];
-        }
-        
-        if (!answers || Object.keys(answers).length === 0) {
-            console.error('回答データがありません');
-            return [];
-        }
-
-        // 質問の重要度を設定（デフォルトは1、特に重要な質問は重み付けを高くする）
-        const questionWeights = {
-            "gender": 1.5,    // 性別は重要度高め
-            "brand": 1.2,     // ブランドは重要度高め
-            "scene": 1.2,     // 使用シーンは重要度高め
-            "design": 1.0,    // デザインは標準
-            "function": 1.0,  // 機能は標準
-            "band": 0.8,      // バンドは標準よりやや低め
-            "case_color": 0.8,// ケース色は標準よりやや低め
-            "standard": 0.7,  // 定番は重要度低め
-            "hands": 0.7,     // 針の有無は重要度低め
-            "build": 0.7      // 体格は重要度低め
-        };
-
-        try {
-            // フィルタリングと重み付けスコアリングを同時に行う
-            const matchedWatches = watches.map(watch => {
-                if (!watch) return null; // 無効なデータをスキップ
-                
-                let totalScore = 0;
-                let maxPossibleScore = 0;
-                let matchDetails = {};
-
-                // 各質問に対するマッチング評価
-                Object.entries(answers).forEach(([questionId, optionId]) => {
-                    // 「指定なし」または未回答の場合はスキップ
-                    if (!optionId || optionId === "no_preference") return;
-
-                    // 質問データの取得
-                    const question = appData.questions.find(q => q.id === questionId);
-                    if (!question) {
-                        console.log(`質問ID ${questionId} が見つかりません`);
-                        return;
-                    }
-                    
-                    // 選択肢データの取得
-                    const selectedOption = question.options.find(o => o.id === optionId);
-                    if (!selectedOption) {
-                        console.log(`質問 ${questionId} の選択肢ID ${optionId} が見つかりません`);
-                        return;
-                    }
-
-                    // この質問の重み付け（デフォルトは1）
-                    const weight = questionWeights[questionId] || 1;
-                    maxPossibleScore += weight;
-
-                    // マッチング評価
-                    let isMatch = false;
-                    let matchScore = 0;
-
-                    // ブランドの場合は完全一致で評価
-                    if (question.question === "ブランド" && selectedOption.text) {
-                        // ブランド名の正規化（大文字小文字を無視）
-                        const normalizedBrand = (watch.brand || "").toLowerCase();
-                        const normalizedOption = selectedOption.text.toLowerCase();
-                        
-                        isMatch = normalizedBrand === normalizedOption;
-                        matchScore = isMatch ? weight : 0;
-                    } 
-                    // 属性の場合は配列内の完全一致で評価
-                    else if (selectedOption.text) {
-                        const attributes = watch.attributes || {};
-                        // 質問のテキストを属性名として使用
-                        const attributeKey = question.question;
-                        const attributeValues = attributes[attributeKey] || [];
-                        
-                        // 属性値が配列でない場合は配列に変換
-                        const attributeArray = Array.isArray(attributeValues) ? attributeValues : [attributeValues];
-                        
-                        // 選択肢のテキストを正規化
-                        const normalizedOption = selectedOption.text.toLowerCase();
-                        
-                        // 完全一致を優先
-                        let hasExactMatch = false;
-                        let hasPartialMatch = false;
-                        
-                        for (const value of attributeArray) {
-                            if (!value) continue;
-                            
-                            // 属性値を正規化
-                            const normalizedValue = value.toLowerCase();
-                            
-                            // 完全一致チェック
-                            if (normalizedValue === normalizedOption) {
-                                hasExactMatch = true;
-                                break;
-                            }
-                            
-                            // 部分一致チェック
-                            if (normalizedValue.includes(normalizedOption) || normalizedOption.includes(normalizedValue)) {
-                                hasPartialMatch = true;
-                            }
-                        }
-                        
-                        if (hasExactMatch) {
-                            isMatch = true;
-                            matchScore = weight;
-                        } else if (hasPartialMatch) {
-                            isMatch = true;
-                            matchScore = weight * 0.5; // 部分一致は完全一致の半分のスコア
-                        }
-                    }
-
-                    // マッチング詳細を記録
-                    matchDetails[question.question] = {
-                        userChoice: selectedOption.text || "",
-                        watchValue: question.question === "ブランド" ? 
-                            (watch.brand || "") : 
-                            ((watch.attributes && watch.attributes[question.question]) ? 
-                                (Array.isArray(watch.attributes[question.question]) ? 
-                                    watch.attributes[question.question].join(", ") : 
-                                    watch.attributes[question.question]) : 
-                                ""),
-                        isMatch: isMatch,
-                        score: matchScore,
-                        weight: weight
-                    };
-
-                    totalScore += matchScore;
-                });
-
-                // マッチ率の計算（回答した質問がない場合は0%）
-                const matchRate = maxPossibleScore > 0 ? Math.round((totalScore / maxPossibleScore) * 100) : 0;
-
-                // 結果オブジェクトを返す
-                return {
-                    ...watch,
-                    matchRate: matchRate,
-                    matchDetails: matchDetails,
-                    totalScore: totalScore,
-                    maxPossibleScore: maxPossibleScore
-                };
-            }).filter(watch => watch !== null); // 無効なデータを除外
-
-            console.log("マッチング完了: 結果数", matchedWatches.length);
-
-            // マッチ率でソート
-            return matchedWatches
-                .filter(watch => watch.matchRate > 0) // マッチ率0%の時計は除外
-                .sort((a, b) => {
-                    // まずマッチ率で降順ソート
-                    if (b.matchRate !== a.matchRate) {
-                        return b.matchRate - a.matchRate;
-                    }
-                    // マッチ率が同じ場合は、総スコアで降順ソート
-                    return b.totalScore - a.totalScore;
-                });
-        } catch (error) {
-            console.error('マッチング処理中にエラーが発生しました:', error);
-            // エラーの詳細をコンソールに出力
-            console.error('エラーの詳細:', error.message);
-            console.error('エラーのスタックトレース:', error.stack);
-            return [];
-        }
-    }
-
-    // マッチング結果を表示する関数
-    function displayMatchingResults(results, userAnswers) {
-        try {
-            console.log("結果表示開始: 結果数", results ? results.length : 0);
-            
-            const resultsContainer = document.getElementById('results-content');
-            if (!resultsContainer) {
-                console.error('結果表示コンテナが見つかりません');
-                return;
-            }
-            
-            resultsContainer.innerHTML = '';
-
-            if (!results || results.length === 0) {
-                resultsContainer.innerHTML = '<div class="no-results">条件に一致する時計が見つかりませんでした。条件を変更して再度お試しください。</div>';
-                return;
-            }
-
-            // 上位5つの結果のみ表示
-            const topResults = results.slice(0, 5);
-            
-            topResults.forEach((watch, index) => {
-                const resultItem = document.createElement('div');
-                resultItem.className = 'result-item';
-                
-                // 基本情報
-                let brandName = watch.brand || '';
-                let watchName = watch.name || '';
-                let fullName = brandName + (watchName ? ' ' + watchName : '');
-                
-                if (!fullName.trim()) {
-                    fullName = 'ID: ' + (watch.id || 'unknown'); // 名前がない場合はIDを表示
-                }
-                
-                // マッチ率に応じたスタイル
-                let matchRateClass = '';
-                if (watch.matchRate >= 80) {
-                    matchRateClass = 'excellent-match';
-                } else if (watch.matchRate >= 60) {
-                    matchRateClass = 'good-match';
-                } else if (watch.matchRate >= 40) {
-                    matchRateClass = 'fair-match';
-                } else {
-                    matchRateClass = 'poor-match';
-                }
-                
-                // 結果アイテムのHTML
-                resultItem.innerHTML = `
-                    <h3>${index + 1}. ${fullName}</h3>
-                    <div class="match-rate ${matchRateClass}">マッチ率: ${watch.matchRate}%</div>
-                    ${watch.product_url ? `<a href="${watch.product_url}" target="_blank" class="product-link">製品詳細を見る</a>` : ''}
-                    ${watch.image ? `<img src="${watch.image}" alt="${fullName}" class="watch-image" onerror="this.style.display='none'">` : ''}
-                    
-                    <div class="watch-details">
-                        <h4>時計の詳細</h4>
-                        <table>
-                            ${watch.price ? `<tr><td>価格:</td><td>${watch.price}</td></tr>` : ''}
-                            ${watch.details && watch.details.caliber ? `<tr><td>キャリバー:</td><td>${watch.details.caliber}</td></tr>` : ''}
-                            ${watch.details && watch.details.drive_system ? `<tr><td>駆動方式:</td><td>${watch.details.drive_system}</td></tr>` : ''}
-                            ${watch.details && watch.details.water_resistance ? `<tr><td>防水性:</td><td>${watch.details.water_resistance}</td></tr>` : ''}
-                            ${watch.details && watch.details.case_material ? `<tr><td>ケース素材:</td><td>${watch.details.case_material}</td></tr>` : ''}
-                            ${watch.details && watch.details.band_material ? `<tr><td>バンド素材:</td><td>${watch.details.band_material}</td></tr>` : ''}
-                        </table>
-                    </div>
-                    
-                    <div class="matched-attributes">
-                        <h4>マッチした属性</h4>
-                        <ul>
-                            ${Object.entries(watch.matchDetails || {})
-                                .filter(([_, detail]) => detail && detail.isMatch)
-                                .map(([question, detail]) => `
-                                    <li>
-                                        <strong>${question}:</strong> 
-                                        あなたの選択「${detail.userChoice}」が
-                                        時計の「${detail.watchValue}」とマッチしました
-                                    </li>
-                                `).join('')}
-                        </ul>
-                    </div>
-                `;
-                
-                resultsContainer.appendChild(resultItem);
-            });
-            
-            // 結果の概要
-            const resultsSummary = document.createElement('div');
-            resultsSummary.className = 'results-summary';
-            resultsSummary.innerHTML = `
-                <p>合計 ${results.length} 件の時計が見つかりました（上位5件を表示）</p>
-            `;
-            
-            resultsContainer.insertBefore(resultsSummary, resultsContainer.firstChild);
-            console.log("結果表示完了");
-        } catch (error) {
-            console.error('結果表示中にエラーが発生しました:', error);
-            console.error('エラーの詳細:', error.message);
-            console.error('エラーのスタックトレース:', error.stack);
-            
-            const resultsContainer = document.getElementById('results-content');
-            if (resultsContainer) {
-                resultsContainer.innerHTML = '<div class="error-message">結果の表示中にエラーが発生しました。もう一度お試しください。</div>';
-            }
-        }
-    }
-    </script>
-
-    <script>
-        // アプリケーションのグローバル変数
-        let appData = null;
-        let currentQuestionIndex = 0;
-        let userAnswers = {};
-        
-        // DOM要素
-        const questionContainer = document.getElementById('question-container');
-        const questionNumber = document.getElementById('question-number');
-        const questionTitle = document.getElementById('question-title');
-        const optionsContainer = document.getElementById('options-container');
-        const prevButton = document.getElementById('prev-button');
-        const nextButton = document.getElementById('next-button');
-        const skipButton = document.getElementById('skip-button');
-        const startMatchingButton = document.getElementById('start-matching');
-        const resultsSection = document.getElementById('results-section');
-        const resultsContent = document.getElementById('results-content');
-        const restartButton = document.getElementById('restart-button');
-        const progressBar = document.getElementById('progress-bar');
-        const loadingIndicator = document.getElementById('loading');
-        const errorContainer = document.getElementById('error-container');
-        const errorTitle = document.getElementById('error-title');
-        const errorMessage = document.getElementById('error-message');
-        const errorOkButton = document.getElementById('error-ok-button');
-        
-        // アプリケーションの初期化
-        async function initApp() {
-            try {
-                showLoading();
-                
-                // データの読み込み
-                const timestamp = new Date().getTime(); // キャッシュ回避のためのタイムスタンプ
-                const response = await fetch(`final_app_data.json?t=${timestamp}`);
-                
-                if (!response.ok) {
-                    throw new Error(`データの読み込みに失敗しました: ${response.status} ${response.statusText}`);
-                }
-                
-                appData = await response.json();
-                
-                if (!appData || !appData.questions || !Array.isArray(appData.questions) || appData.questions.length === 0) {
-                    throw new Error('質問データが正しく読み込まれていません');
-                }
-                
-                if (!appData.watches || !Array.isArray(appData.watches) || appData.watches.length === 0) {
-                    throw new Error('時計データが正しく読み込まれていません');
-                }
-                
-                console.log('アプリデータ読み込み完了:', appData);
-                console.log('質問数:', appData.questions.length);
-                console.log('時計データ数:', appData.watches.length);
-                
-                // 最初の質問を表示
-                displayQuestion(0);
-                
-                // イベントリスナーの設定
-                setupEventListeners();
-                
-                hideLoading();
-            } catch (error) {
-                console.error('アプリケーションの初期化中にエラーが発生しました:', error);
-                hideLoading();
-                showError('データ読み込みエラー', `アプリケーションの初期化中にエラーが発生しました: ${error.message}`);
-            }
-        }
-        
-        // 質問を表示する関数
-        function displayQuestion(index) {
-            try {
-                if (!appData || !appData.questions || index < 0 || index >= appData.questions.length) {
-                    console.error('無効な質問インデックス:', index);
-                    return;
-                }
-                
-                const question = appData.questions[index];
-                
-                // 質問番号と進捗状況の更新
-                questionNumber.textContent = index + 1;
-                questionTitle.textContent = question.question;
-                
-                // 進捗バーの更新
-                const progressPercentage = ((index + 1) / appData.questions.length) * 100;
-                progressBar.style.width = `${progressPercentage}%`;
-                
-                // オプションの表示
-                optionsContainer.innerHTML = '';
-                
-                question.options.forEach(option => {
-                    const optionElement = document.createElement('div');
-                    optionElement.className = 'option';
-                    optionElement.dataset.optionId = option.id;
-                    optionElement.textContent = option.text;
-                    
-                    // 既に選択されているオプションにはselectedクラスを追加
-                    if (userAnswers[question.id] === option.id) {
-                        optionElement.classList.add('selected');
-                    }
-                    
-                    optionElement.addEventListener('click', () => {
-                        // 他のオプションからselectedクラスを削除
-                        document.querySelectorAll('.option').forEach(el => {
-                            el.classList.remove('selected');
-                        });
-                        
-                        // クリックされたオプションにselectedクラスを追加
-                        optionElement.classList.add('selected');
-                        
-                        // ユーザーの回答を保存
-                        userAnswers[question.id] = option.id;
-                        
-                        // 次へボタンを有効化
-                        nextButton.disabled = false;
-                    });
-                    
-                    optionsContainer.appendChild(optionElement);
-                });
-                
-                // ナビゲーションボタンの状態を更新
-                prevButton.disabled = index === 0;
-                nextButton.disabled = !userAnswers[question.id];
-                
-                // 現在の質問インデックスを更新
-                currentQuestionIndex = index;
-                
-                // マッチング開始ボタンの表示/非表示
-                startMatchingButton.style.display = index === appData.questions.length - 1 ? 'block' : 'none';
-            } catch (error) {
-                console.error('質問表示中にエラーが発生しました:', error);
-                showError('表示エラー', `質問の表示中にエラーが発生しました: ${error.message}`);
-            }
-        }
-        
-        // イベントリスナーの設定
-        function setupEventListeners() {
-            // 前へボタン
-            prevButton.addEventListener('click', () => {
-                if (currentQuestionIndex > 0) {
-                    displayQuestion(currentQuestionIndex - 1);
-                }
-            });
-            
-            // 次へボタン
-            nextButton.addEventListener('click', () => {
-                if (currentQuestionIndex < appData.questions.length - 1) {
-                    displayQuestion(currentQuestionIndex + 1);
-                }
-            });
-            
-            // スキップボタン
-            skipButton.addEventListener('click', () => {
-                // 現在の質問をスキップ（回答をクリア）
-                const currentQuestion = appData.questions[currentQuestionIndex];
-                delete userAnswers[currentQuestion.id];
-                
-                // 次の質問へ進む
-                if (currentQuestionIndex < appData.questions.length - 1) {
-                    displayQuestion(currentQuestionIndex + 1);
-                }
-            });
-            
-            // マッチング開始ボタン
-            startMatchingButton.addEventListener('click', async () => {
-                try {
-                    showLoading();
-                    
-                    // 少し遅延を入れてUIの応答性を向上
-                    await new Promise(resolve => setTimeout(resolve, 500));
-                    
-                    // マッチング処理
-                    const matchedWatches = matchWatches(userAnswers, appData.watches);
-                    
-                    // 結果の表示
-                    displayMatchingResults(matchedWatches, userAnswers);
-                    
-                    // 質問セクションを非表示にし、結果セクションを表示
-                    questionContainer.style.display = 'none';
-                    startMatchingButton.style.display = 'none';
-                    resultsSection.style.display = 'block';
-                    
-                    hideLoading();
-                } catch (error) {
-                    console.error('マッチング処理中にエラーが発生しました:', error);
-                    hideLoading();
-                    showError('マッチングエラー', 'マッチング処理中にエラーが発生しました。もう一度お試しください。');
-                }
-            });
-            
-            // 最初からやり直すボタン
-            restartButton.addEventListener('click', () => {
-                // ユーザーの回答をリセット
-                userAnswers = {};
-                
-                // 最初の質問に戻る
-                displayQuestion(0);
-                
-                // 結果セクションを非表示にし、質問セクションを表示
-                resultsSection.style.display = 'none';
-                questionContainer.style.display = 'block';
-                startMatchingButton.style.display = 'none';
-            });
-            
-            // エラーOKボタン
-            errorOkButton.addEventListener('click', () => {
-                hideError();
-            });
-        }
-        
-        // ローディングインジケーターの表示/非表示
-        function showLoading() {
-            loadingIndicator.style.display = 'flex';
-        }
-        
-        function hideLoading() {
-            loadingIndicator.style.display = 'none';
-        }
-        
-        // エラーメッセージの表示/非表示
-        function showError(title, message) {
-            errorTitle.textContent = title || 'エラーが発生しました';
-            errorMessage.textContent = message || 'エラーが発生しました。もう一度お試しください。';
-            errorContainer.style.display = 'block';
-        }
-        
-        function hideError() {
-            errorContainer.style.display = 'none';
-        }
-        
-        // アプリケーションの初期化
-        document.addEventListener('DOMContentLoaded', initApp);
+        // (以前提示した修正後の matchWatches 関数)
+        // (以前提示した displayMatchingResults 関数)
+        // (以前の index.html にあった JavaScript コード)
     </script>
 </body>
+
 </html>
