@@ -1,4 +1,4 @@
-// 改善されたマッチングロジック
+// 修正されたマッチングロジック
 // ブランド選択の優先度を大幅に向上させたバージョン
 
 // 質問データを読み込む
@@ -11,16 +11,17 @@ let matchedWatches = [];
 // DOM要素
 const questionContainer = document.getElementById('question-container');
 const questionTitle = document.getElementById('question-title');
+const questionNumber = document.getElementById('question-number'); // 修正: progressIndicatorの代わりにquestion-numberを使用
 const optionsContainer = document.getElementById('options-container');
 const prevButton = document.getElementById('prev-button');
 const skipButton = document.getElementById('skip-button');
 const nextButton = document.getElementById('next-button');
 const progressBar = document.getElementById('progress-bar');
-const progressIndicator = document.getElementById('progress-indicator');
-const resultsContainer = document.getElementById('results-container');
-const matchingButton = document.getElementById('matching-button');
-const loadingMessage = document.getElementById('loading-message');
+const resultsContainer = document.getElementById('results-section'); // 修正: results-containerからresults-sectionに変更
+const startMatchingButton = document.getElementById('start-matching'); // 修正: matchingButtonからstart-matchingに変更
 const errorContainer = document.getElementById('error-container');
+const resultsContent = document.getElementById('results-content'); // 追加: 結果を表示する要素
+const restartButton = document.getElementById('restart-button'); // 追加: 再開ボタン
 
 // 質問データを読み込む
 async function loadQuestions() {
@@ -37,15 +38,17 @@ async function loadQuestions() {
         if (questions.length > 0) {
             displayQuestion(0);
             updateProgressBar();
-            loadingMessage.style.display = 'none';
+            // loadingMessageは使用しない
         } else {
             throw new Error('質問データが見つかりません');
         }
     } catch (error) {
         console.error('エラー:', error);
-        errorContainer.textContent = `エラーが発生しました: ${error.message}`;
+        const errorMessage = document.getElementById('error-message');
+        if (errorMessage) {
+            errorMessage.textContent = `エラーが発生しました: ${error.message}`;
+        }
         errorContainer.style.display = 'block';
-        loadingMessage.style.display = 'none';
     }
 }
 
@@ -59,7 +62,7 @@ function displayQuestion(index) {
     const question = questions[index];
     
     questionTitle.textContent = question.title;
-    progressIndicator.textContent = index + 1;
+    questionNumber.textContent = index + 1; // 修正: progressIndicatorの代わりにquestionNumberを使用
     
     // 選択肢をクリア
     optionsContainer.innerHTML = '';
@@ -101,9 +104,9 @@ function displayQuestion(index) {
     
     // 最後の質問の場合、マッチングボタンを表示
     if (index === questions.length - 1) {
-        matchingButton.style.display = 'block';
+        startMatchingButton.style.display = 'block'; // 修正: matchingButtonからstartMatchingButtonに変更
     } else {
-        matchingButton.style.display = 'none';
+        startMatchingButton.style.display = 'none'; // 修正: matchingButtonからstartMatchingButtonに変更
     }
 }
 
@@ -148,27 +151,29 @@ function startMatching() {
         
         // ブランド選択を特別に処理（優先度を大幅に向上）
         const brandQuestion = questions.find(q => q.title === 'ブランド');
-        const brandQuestionIndex = questions.indexOf(brandQuestion);
-        const selectedBrand = selectedOptions[brandQuestionIndex];
-        
-        // ブランド選択がある場合
-        if (selectedBrand && selectedBrand.text !== '特にこだわらない') {
-            // 時計のブランド属性を確認
-            const watchBrands = watch.attributes['ブランド'] || [];
+        if (brandQuestion) { // 追加: brandQuestionがundefinedの場合の対策
+            const brandQuestionIndex = questions.indexOf(brandQuestion);
+            const selectedBrand = selectedOptions[brandQuestionIndex];
             
-            // 選択したブランドが時計のブランド属性に含まれているか確認
-            const brandMatch = watchBrands.includes(selectedBrand.text);
-            
-            // ブランドが一致しない場合は大幅なペナルティを適用
-            if (!brandMatch) {
-                score -= 1000; // 大きなペナルティ
-            } else {
-                score += 500; // 大きなボーナス
-                matchedAttributes.push({
-                    question: 'ブランド',
-                    userChoice: selectedBrand.text,
-                    watchValue: `${selectedBrand.text}, 特にこだわらない`
-                });
+            // ブランド選択がある場合
+            if (selectedBrand && selectedBrand.text !== '特にこだわらない') {
+                // 時計のブランド属性を確認
+                const watchBrands = watch.attributes['ブランド'] || [];
+                
+                // 選択したブランドが時計のブランド属性に含まれているか確認
+                const brandMatch = watchBrands.includes(selectedBrand.text);
+                
+                // ブランドが一致しない場合は大幅なペナルティを適用
+                if (!brandMatch) {
+                    score -= 1000; // 大きなペナルティ
+                } else {
+                    score += 500; // 大きなボーナス
+                    matchedAttributes.push({
+                        question: 'ブランド',
+                        userChoice: selectedBrand.text,
+                        watchValue: `${selectedBrand.text}, 特にこだわらない`
+                    });
+                }
             }
         }
         
@@ -177,6 +182,7 @@ function startMatching() {
             if (!selectedOption) return; // スキップされた質問
             
             const question = questions[index];
+            if (!question) return; // 追加: questionがundefinedの場合の対策
             
             // ブランド質問は既に特別処理したのでスキップ
             if (question.title === 'ブランド') return;
@@ -213,7 +219,7 @@ function startMatching() {
         });
         
         // マッチング率を計算（ブランドペナルティを考慮）
-        let matchRate = Math.max(0, Math.min(100, Math.round((score / maxScore) * 100)));
+        let matchRate = maxScore > 0 ? Math.max(0, Math.min(100, Math.round((score / maxScore) * 100))) : 0;
         
         // ブランドペナルティが適用された場合は低いマッチング率に調整
         if (score < 0) {
@@ -240,22 +246,19 @@ function startMatching() {
 function displayResults() {
     // 質問コンテナを非表示
     questionContainer.style.display = 'none';
+    startMatchingButton.style.display = 'none'; // 追加: マッチングボタンを非表示
     
     // 結果コンテナを表示
     resultsContainer.style.display = 'block';
     
     // 結果をクリア
-    resultsContainer.innerHTML = '';
-    
-    // 結果のヘッダーを追加
-    const header = document.createElement('h2');
-    header.textContent = 'あなたにおすすめの腕時計';
-    resultsContainer.appendChild(header);
+    resultsContent.innerHTML = ''; // 修正: resultsContainerからresultsContentに変更
     
     // 見つかった時計の数を表示
     const countInfo = document.createElement('p');
+    countInfo.className = 'results-summary';
     countInfo.textContent = `合計 ${watches.length} 件の時計が見つかりました（上位5件を表示）`;
-    resultsContainer.appendChild(countInfo);
+    resultsContent.appendChild(countInfo); // 修正: resultsContainerからresultsContentに変更
     
     // 上位5件の時計を表示
     matchedWatches.slice(0, 5).forEach((matchedWatch, index) => {
@@ -264,7 +267,7 @@ function displayResults() {
         const matchedAttributes = matchedWatch.matchedAttributes;
         
         const watchCard = document.createElement('div');
-        watchCard.className = 'watch-card';
+        watchCard.className = 'result-item'; // 修正: watch-cardからresult-itemに変更
         
         // 時計のタイトル
         const title = document.createElement('h3');
@@ -272,66 +275,64 @@ function displayResults() {
         watchCard.appendChild(title);
         
         // マッチング率
-        const rateContainer = document.createElement('div');
-        rateContainer.className = 'match-rate-container';
+        const rateSpan = document.createElement('span');
+        rateSpan.className = 'match-rate';
+        if (matchRate >= 80) {
+            rateSpan.classList.add('excellent-match');
+        } else if (matchRate >= 60) {
+            rateSpan.classList.add('good-match');
+        } else if (matchRate >= 40) {
+            rateSpan.classList.add('fair-match');
+        } else {
+            rateSpan.classList.add('poor-match');
+        }
+        rateSpan.textContent = `マッチ率: ${matchRate}%`;
+        watchCard.appendChild(rateSpan);
         
-        const rateLabel = document.createElement('span');
-        rateLabel.className = 'match-rate';
-        rateLabel.textContent = `マッチ率: ${matchRate}%`;
-        rateContainer.appendChild(rateLabel);
-        
-        const detailButton = document.createElement('a');
-        detailButton.className = 'detail-button';
-        detailButton.textContent = '製品詳細を見る';
-        detailButton.href = '#';
-        detailButton.addEventListener('click', (e) => {
+        // 製品詳細リンク
+        const detailLink = document.createElement('a');
+        detailLink.className = 'product-link';
+        detailLink.textContent = '製品詳細を見る';
+        detailLink.href = '#';
+        detailLink.addEventListener('click', (e) => {
             e.preventDefault();
-            // 製品詳細ページへのリンク（実装予定）
             alert(`${watch.brand}の詳細ページは準備中です`);
         });
-        rateContainer.appendChild(detailButton);
-        
-        watchCard.appendChild(rateContainer);
+        watchCard.appendChild(detailLink);
         
         // 時計の詳細
         const detailsContainer = document.createElement('div');
         detailsContainer.className = 'watch-details';
         
         // 時計のスペック
-        const specsList = document.createElement('div');
-        specsList.className = 'specs-list';
+        const specsTable = document.createElement('table');
         
         // キャリバー
-        const caliber = document.createElement('div');
-        caliber.className = 'spec-item';
-        caliber.innerHTML = `<span class="spec-label">キャリバー:</span> <span class="spec-value">${watch.caliber || '不明'}</span>`;
-        specsList.appendChild(caliber);
+        const caliberRow = document.createElement('tr');
+        caliberRow.innerHTML = `<td>キャリバー</td><td>${watch.caliber || '不明'}</td>`;
+        specsTable.appendChild(caliberRow);
         
         // 駆動方式
-        const movement = document.createElement('div');
-        movement.className = 'spec-item';
-        movement.innerHTML = `<span class="spec-label">駆動方式:</span> <span class="spec-value">${watch.movement || '不明'}</span>`;
-        specsList.appendChild(movement);
+        const movementRow = document.createElement('tr');
+        movementRow.innerHTML = `<td>駆動方式</td><td>${watch.movement || '不明'}</td>`;
+        specsTable.appendChild(movementRow);
         
         // 防水性
-        const waterResistance = document.createElement('div');
-        waterResistance.className = 'spec-item';
-        waterResistance.innerHTML = `<span class="spec-label">防水性:</span> <span class="spec-value">${watch.waterResistance || '不明'}</span>`;
-        specsList.appendChild(waterResistance);
+        const waterResistanceRow = document.createElement('tr');
+        waterResistanceRow.innerHTML = `<td>防水性</td><td>${watch.waterResistance || '不明'}</td>`;
+        specsTable.appendChild(waterResistanceRow);
         
         // ケース素材
-        const caseMaterial = document.createElement('div');
-        caseMaterial.className = 'spec-item';
-        caseMaterial.innerHTML = `<span class="spec-label">ケース素材:</span> <span class="spec-value">${watch.caseMaterial || '不明'}</span>`;
-        specsList.appendChild(caseMaterial);
+        const caseMaterialRow = document.createElement('tr');
+        caseMaterialRow.innerHTML = `<td>ケース素材</td><td>${watch.caseMaterial || '不明'}</td>`;
+        specsTable.appendChild(caseMaterialRow);
         
         // バンド素材
-        const bandMaterial = document.createElement('div');
-        bandMaterial.className = 'spec-item';
-        bandMaterial.innerHTML = `<span class="spec-label">バンド素材:</span> <span class="spec-value">${watch.bandMaterial || '不明'}</span>`;
-        specsList.appendChild(bandMaterial);
+        const bandMaterialRow = document.createElement('tr');
+        bandMaterialRow.innerHTML = `<td>バンド素材</td><td>${watch.bandMaterial || '不明'}</td>`;
+        specsTable.appendChild(bandMaterialRow);
         
-        detailsContainer.appendChild(specsList);
+        detailsContainer.appendChild(specsTable);
         
         // マッチした属性
         const matchedAttributesContainer = document.createElement('div');
@@ -341,39 +342,39 @@ function displayResults() {
         matchedAttributesTitle.textContent = 'マッチした属性';
         matchedAttributesContainer.appendChild(matchedAttributesTitle);
         
+        const matchedAttributesList = document.createElement('ul');
+        
         matchedAttributes.forEach(attr => {
-            const attributeItem = document.createElement('div');
-            attributeItem.className = 'attribute-item';
-            attributeItem.innerHTML = `<span class="check-mark">✓</span> <span class="attribute-label">${attr.question}:</span> あなたの選択「${attr.userChoice}」が時計の「${attr.watchValue}」とマッチしました`;
-            matchedAttributesContainer.appendChild(attributeItem);
+            const attributeItem = document.createElement('li');
+            attributeItem.textContent = `${attr.question}: あなたの選択「${attr.userChoice}」が時計の「${attr.watchValue}」とマッチしました`;
+            matchedAttributesList.appendChild(attributeItem);
         });
         
+        matchedAttributesContainer.appendChild(matchedAttributesList);
         detailsContainer.appendChild(matchedAttributesContainer);
         watchCard.appendChild(detailsContainer);
         
-        resultsContainer.appendChild(watchCard);
+        resultsContent.appendChild(watchCard); // 修正: resultsContainerからresultsContentに変更
     });
     
-    // 再検索ボタン
-    const restartButton = document.createElement('button');
-    restartButton.className = 'restart-button';
-    restartButton.textContent = '質問をやり直す';
-    restartButton.addEventListener('click', () => {
-        // 選択をリセット
-        selectedOptions = [];
-        
-        // 最初の質問に戻る
-        displayQuestion(0);
-        updateProgressBar();
-        
-        // 質問コンテナを表示
-        questionContainer.style.display = 'block';
-        
-        // 結果コンテナを非表示
-        resultsContainer.style.display = 'none';
-    });
+    // 再開ボタンは既にHTMLに存在するので、イベントリスナーのみ追加
+    restartButton.addEventListener('click', restartQuestions);
+}
+
+// 質問をやり直す
+function restartQuestions() {
+    // 選択をリセット
+    selectedOptions = [];
     
-    resultsContainer.appendChild(restartButton);
+    // 最初の質問に戻る
+    displayQuestion(0);
+    updateProgressBar();
+    
+    // 質問コンテナを表示
+    questionContainer.style.display = 'block';
+    
+    // 結果コンテナを非表示
+    resultsContainer.style.display = 'none';
 }
 
 // イベントリスナーを設定
@@ -385,5 +386,13 @@ document.addEventListener('DOMContentLoaded', () => {
     prevButton.addEventListener('click', goToPreviousQuestion);
     skipButton.addEventListener('click', skipQuestion);
     nextButton.addEventListener('click', goToNextQuestion);
-    matchingButton.addEventListener('click', startMatching);
+    startMatchingButton.addEventListener('click', startMatching); // 修正: matchingButtonからstartMatchingButtonに変更
+    
+    // エラーOKボタン
+    const errorOkButton = document.getElementById('error-ok-button');
+    if (errorOkButton) {
+        errorOkButton.addEventListener('click', () => {
+            errorContainer.style.display = 'none';
+        });
+    }
 });
