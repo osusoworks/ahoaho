@@ -1,393 +1,254 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>腕時計マッチングアプリ</title>
     <style>
-        /* 基本スタイル */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
         body {
-            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
-            line-height: 1.6;
-            color: #333;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
             background-color: #f5f5f5;
-            padding: 0;
-            margin: 0;
         }
-
+        
         .container {
-            max-width: 100%;
-            padding: 0;
+            max-width: 800px;
             margin: 0 auto;
+            padding: 20px;
         }
-
-        header {
+        
+        .header {
             background-color: #003366;
             color: white;
-            padding: 1rem;
+            padding: 20px;
             text-align: center;
-            position: relative;
+            margin-bottom: 20px;
         }
-
-        h1 {
-            font-size: 1.5rem;
-            margin: 0;
-        }
-
-        /* 質問セクション */
-        .question-section {
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin: 1rem;
-            padding: 1.5rem;
-            position: relative;
-        }
-
-        .question-number {
-            position: absolute;
-            top: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #007bff;
-            color: white;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-
-        .question-title {
-            font-size: 1.2rem;
-            margin-bottom: 1rem;
-            text-align: center;
-            padding-top: 0.5rem;
-        }
-
-        .options-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            justify-content: center;
-        }
-
-        .option {
-            background-color: #f0f0f0;
-            border: 2px solid #ddd;
-            border-radius: 4px;
-            padding: 0.5rem 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            flex: 1 0 calc(50% - 0.5rem);
-            text-align: center;
-            min-width: 120px;
-        }
-
-        .option:hover {
-            background-color: #e0e0e0;
-            border-color: #ccc;
-        }
-
-        .option.selected {
-            background-color: #007bff;
-            color: white;
-            border-color: #0056b3;
-        }
-
-        /* ナビゲーションボタン */
-        .navigation-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 1.5rem;
-        }
-
-        .nav-button {
-            background-color: #003366;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 0.5rem 1rem;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .nav-button:hover {
-            background-color: #00254d;
-        }
-
-        .nav-button:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-        }
-
-        .skip-button {
-            background-color: #6c757d;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 0.5rem 1rem;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            margin: 0 auto;
-        }
-
-        .skip-button:hover {
-            background-color: #5a6268;
-        }
-
-        /* プログレスバー */
+        
         .progress-container {
             width: 100%;
-            background-color: #e0e0e0;
-            border-radius: 4px;
-            margin: 1rem 0;
-            height: 8px;
-            overflow: hidden;
+            height: 10px;
+            background-color: #ddd;
+            margin-bottom: 20px;
+            border-radius: 5px;
         }
-
+        
         .progress-bar {
             height: 100%;
             background-color: #007bff;
+            border-radius: 5px;
+            width: 0;
             transition: width 0.3s ease;
         }
-
-        /* 結果セクション */
-        .results-section {
-            display: none;
-            background-color: #fff;
+        
+        .question-container {
+            background-color: white;
             border-radius: 8px;
+            padding: 20px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin: 1rem;
-            padding: 1.5rem;
+            margin-bottom: 20px;
         }
-
-        .results-title {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
+        
+        .question-number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-right: 10px;
+        }
+        
+        .question-title {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
             text-align: center;
         }
-
+        
+        .options-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .option {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.2s ease;
+        }
+        
+        .option:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .option.selected {
+            background-color: #007bff;
+            color: white;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s ease;
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .prev-button {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        
+        .skip-button {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .next-button {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .start-matching {
+            background-color: #dc3545;
+            color: white;
+            display: none;
+            margin: 20px auto;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+        }
+        
+        .results-section {
+            display: none;
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .results-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .results-summary {
+            text-align: center;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        
         .result-item {
             border: 1px solid #ddd;
             border-radius: 4px;
-            padding: 1rem;
-            margin-bottom: 1rem;
+            padding: 15px;
+            margin-bottom: 15px;
         }
-
+        
         .result-item h3 {
-            margin-bottom: 0.5rem;
-            color: #003366;
+            margin-top: 0;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
         }
-
+        
         .match-rate {
             display: inline-block;
-            padding: 0.25rem 0.5rem;
+            padding: 5px 10px;
             border-radius: 4px;
-            margin-bottom: 0.5rem;
+            margin-bottom: 10px;
             font-weight: bold;
         }
-
+        
         .excellent-match {
             background-color: #28a745;
             color: white;
         }
-
+        
         .good-match {
-            background-color: #17a2b8;
+            background-color: #ffc107;
+            color: #333;
+        }
+        
+        .fair-match {
+            background-color: #fd7e14;
             color: white;
         }
-
-        .fair-match {
-            background-color: #ffc107;
-            color: #212529;
-        }
-
+        
         .poor-match {
             background-color: #dc3545;
             color: white;
         }
-
-        .watch-image {
-            max-width: 100%;
-            height: auto;
-            margin: 0.5rem 0;
-            max-height: 200px;
-            display: block;
+        
+        .product-link {
+            display: inline-block;
+            margin-bottom: 10px;
+            color: #007bff;
+            text-decoration: none;
         }
-
-        .watch-details,
-        .matched-attributes {
-            margin-top: 1rem;
+        
+        .product-link:hover {
+            text-decoration: underline;
         }
-
-        .watch-details h4,
-        .matched-attributes h4 {
-            margin-bottom: 0.5rem;
-            color: #003366;
-        }
-
+        
         .watch-details table {
             width: 100%;
             border-collapse: collapse;
+            margin-bottom: 15px;
         }
-
+        
         .watch-details td {
-            padding: 0.25rem;
+            padding: 8px;
             border-bottom: 1px solid #eee;
         }
-
+        
         .watch-details td:first-child {
             font-weight: bold;
-            width: 40%;
+            width: 30%;
         }
-
-        .matched-attributes ul {
-            list-style-type: none;
-            padding-left: 0;
-        }
-
-        .matched-attributes li {
-            margin-bottom: 0.25rem;
-            padding-left: 1rem;
-            position: relative;
-        }
-
-        .matched-attributes li:before {
-            content: "✓";
-            color: #28a745;
-            position: absolute;
-            left: 0;
-        }
-
-        .product-link {
-            display: inline-block;
-            background-color: #003366;
-            color: white;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
+        
+        .matched-attributes {
+            background-color: #f8f9fa;
+            padding: 10px;
             border-radius: 4px;
-            margin-bottom: 0.5rem;
+            margin-top: 15px;
         }
-
-        .product-link:hover {
-            background-color: #00254d;
+        
+        .matched-attributes h4 {
+            margin-top: 0;
+            margin-bottom: 10px;
         }
-
-        .results-summary {
-            text-align: center;
-            margin-bottom: 1rem;
-            font-weight: bold;
+        
+        .matched-attributes ul {
+            margin: 0;
+            padding-left: 20px;
         }
-
-        .no-results,
-        .error-message {
-            text-align: center;
-            padding: 2rem;
-            color: #dc3545;
-            font-weight: bold;
-        }
-
-        /* スタートボタン */
-        .start-button {
-            display: block;
-            width: 80%;
-            max-width: 300px;
-            margin: 2rem auto;
+        
+        .restart-button {
             background-color: #007bff;
             color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 1rem;
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
+            display: block;
+            margin: 20px auto 0;
         }
-
-        .start-button:hover {
-            background-color: #0056b3;
-        }
-
-        /* レスポンシブデザイン */
-        @media (max-width: 768px) {
-            .option {
-                flex: 1 0 100%;
-            }
-
-            .navigation-buttons {
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-
-            .nav-button,
-            .skip-button {
-                width: 100%;
-            }
-        }
-
-        @media (min-width: 769px) {
-            .container {
-                max-width: 800px;
-                padding: 0 1rem;
-            }
-
-            .question-section,
-            .results-section {
-                padding: 2rem;
-            }
-
-            .options-container {
-                gap: 1rem;
-            }
-
-            .option {
-                flex: 1 0 calc(33.333% - 1rem);
-            }
-        }
-
-        /* ローディングインジケーター */
-        .loading {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #f3f3f3;
-            border-top-color: #007bff;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* エラーメッセージ */
+        
         .error-container {
             display: none;
             position: fixed;
@@ -395,80 +256,110 @@
             left: 50%;
             transform: translate(-50%, -50%);
             background-color: white;
-            padding: 2rem;
+            padding: 20px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            z-index: 1001;
-            max-width: 90%;
-            width: 400px;
+            z-index: 1000;
             text-align: center;
         }
-
-        .error-container h3 {
+        
+        .error-title {
             color: #dc3545;
-            margin-bottom: 1rem;
+            margin-top: 0;
         }
-
-        .error-container button {
+        
+        .error-ok-button {
             background-color: #007bff;
             color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 0.5rem 1rem;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            margin-top: 1rem;
+            margin-top: 15px;
         }
-
-        .error-container button:hover {
-            background-color: #0056b3;
+        
+        /* 画像表示機能の追加に関するCSS */
+        .watch-image-container {
+            margin: 1rem 0;
+            text-align: center;
+        }
+        
+        .watch-image {
+            max-width: 100%;
+            height: auto;
+            max-height: 200px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* レスポンシブ対応 */
+        @media (min-width: 768px) {
+            .result-item {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                grid-gap: 1rem;
+            }
+            
+            .watch-image-container {
+                grid-column: 1;
+                grid-row: span 2;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .watch-details {
+                grid-column: 2;
+            }
+        }
+        
+        /* 画像ホバー効果 */
+        .watch-image:hover {
+            transform: scale(1.05);
+            transition: transform 0.3s ease;
         }
     </style>
 </head>
-
 <body>
+    <div class="header">
+        <h1>腕時計マッチングアプリ</h1>
+    </div>
+    
     <div class="container">
-        <header>
-            <h1>腕時計マッチングアプリ</h1>
-        </header>
-
         <div class="progress-container">
-            <div class="progress-bar" id="progress-bar" style="width: 0%;"></div>
+            <div class="progress-bar" id="progress-bar"></div>
         </div>
-
-        <div id="question-container" class="question-section">
+        
+        <div class="question-container" id="question-container">
             <div class="question-number" id="question-number">1</div>
             <h2 class="question-title" id="question-title">質問がロード中です...</h2>
+            
             <div class="options-container" id="options-container">
-                </div>
-            <div class="navigation-buttons">
-                <button id="prev-button" class="nav-button" disabled>前へ</button>
-                <button id="skip-button" class="skip-button">この質問をスキップ</button>
-                <button id="next-button" class="nav-button" disabled>次へ</button>
+                <!-- 選択肢がここに表示されます -->
+            </div>
+            
+            <div class="navigation">
+                <button class="prev-button" id="prev-button" disabled>前へ</button>
+                <button class="skip-button" id="skip-button">この質問をスキップ</button>
+                <button class="next-button" id="next-button" disabled>次へ</button>
             </div>
         </div>
-
-        <button id="start-matching" class="start-button">マッチング開始</button>
-
-        <div id="results-section" class="results-section">
+        
+        <button class="start-matching" id="start-matching">マッチング開始</button>
+        
+        <div class="results-section" id="results-section">
             <h2 class="results-title">あなたにおすすめの腕時計</h2>
+            
             <div id="results-content">
-                </div>
-            <button id="restart-button" class="nav-button" style="display: block; margin: 1rem auto;">最初からやり直す</button>
+                <!-- 結果がここに表示されます -->
+            </div>
+            
+            <button class="restart-button" id="restart-button">もう一度やり直す</button>
         </div>
     </div>
-
-    <div class="loading" id="loading">
-        <div class="loading-spinner"></div>
-    </div>
-
+    
     <div class="error-container" id="error-container">
-        <h3 id="error-title">エラーが発生しました</h3>
-        <p id="error-message">マッチング処理中にエラーが発生しました。もう一度お試しください。</p>
-        <button id="error-ok-button">OK</button>
+        <h3 class="error-title">エラーが発生しました</h3>
+        <p id="error-message"></p>
+        <button class="error-ok-button" id="error-ok-button">OK</button>
     </div>
-
+    
     <script src="matching-logic.js"></script>
 </body>
-
 </html>
