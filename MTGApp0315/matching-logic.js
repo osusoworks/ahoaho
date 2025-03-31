@@ -1,4 +1,4 @@
-// 改良されたマッチングロジック
+// 画像表示機能を追加したマッチングロジック
 // ブランド選択の優先度を大幅に向上させ、詳細表示を修正したバージョン
 
 // 質問データを読み込む
@@ -324,6 +324,54 @@ function displayResults() {
             }
         });
         watchCard.appendChild(detailLink);
+        
+        // 時計の画像を表示（新機能）
+        if (watch.image_url) {
+            const imageContainer = document.createElement('div');
+            imageContainer.className = 'watch-image-container';
+            
+            const watchImage = document.createElement('img');
+            watchImage.className = 'watch-image';
+            watchImage.src = watch.image_url;
+            watchImage.alt = `${watch.brand || '時計'} の画像`;
+            watchImage.onerror = function() {
+                // 画像読み込みエラー時の代替処理
+                this.src = 'https://placehold.jp/300x200.png?text=画像準備中';
+                this.alt = '画像準備中';
+            };
+            
+            imageContainer.appendChild(watchImage);
+            watchCard.appendChild(imageContainer);
+        } else if (watch.thumbnail_url) {
+            // 画像URLがなくサムネイルURLがある場合
+            const imageContainer = document.createElement('div');
+            imageContainer.className = 'watch-image-container';
+            
+            const watchImage = document.createElement('img');
+            watchImage.className = 'watch-image';
+            watchImage.src = watch.thumbnail_url;
+            watchImage.alt = `${watch.brand || '時計'} のサムネイル`;
+            watchImage.onerror = function() {
+                // 画像読み込みエラー時の代替処理
+                this.src = 'https://placehold.jp/300x200.png?text=画像準備中';
+                this.alt = '画像準備中';
+            };
+            
+            imageContainer.appendChild(watchImage);
+            watchCard.appendChild(imageContainer);
+        } else {
+            // 画像がない場合はプレースホルダーを表示
+            const imageContainer = document.createElement('div');
+            imageContainer.className = 'watch-image-container';
+            
+            const watchImage = document.createElement('img');
+            watchImage.className = 'watch-image';
+            watchImage.src = 'https://placehold.jp/300x200.png?text=画像準備中';
+            watchImage.alt = '画像準備中';
+            
+            imageContainer.appendChild(watchImage);
+            watchCard.appendChild(imageContainer);
+        }
         
         // 時計の詳細
         const detailsContainer = document.createElement('div');
